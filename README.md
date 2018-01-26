@@ -2,6 +2,7 @@
 
 
 1. The Canny Edge Detector
+
 1A.Smoothing: Smooth the image with a Gaussian filter with spread sigma
 1B.Gradient:Compute gradient magnitude and direction at each pixel of the smoothed image
 1C.Thresholding:Threshold the gradient magnitude image such that strong edges are kept and noise is suppressed
