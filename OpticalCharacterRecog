@@ -1,0 +1,163 @@
+pic  = imread('license.jpeg');
+ 
+[x,y,z] = size(pic);
+pic2gray=uint8(zeros(x,y));
+%h[k]  is the histogram array for k=0,1,2,,255, 
+h= zeros(1,256) ;
+%then the discrete probability for brightness k is p[k]=h[k]/(M*N). 
+p=zeros(1,255);
+%c[k] is the sum of all p  from p[0] to p[k]
+c=zeros(1,255);
+%J[m,n] = 255*c{pic1[m,n]}
+J=uint8(zeros(x,y));
+
+
+%TURN THE IMAGE TO GRAYSCALE FROM RBG
+for i=1 : x
+    for j=1 : y  
+        r= pic(i,j,1);
+        b= pic(i,j,2);
+        g= pic(i,j,3);
+        pixel = uint8((.33*r+.33*b+.34*g));
+        pic2gray(i,j)= pixel;
+        h(1, pixel+1 ) = h(1,pixel+1)+1;
+    end
+end
+imwrite(pic2gray,'z1pic2Gray.tif','tiff')
+
+%then the discrete probability for brightness k is p[k]=h[k]/(M*N). 
+for a=1:255
+     p(a)=h(a)/(x*y);
+end
+
+%c[k] is the sum of all p  from p[0] to p[k]
+for ck=1:255
+    for pk=1:255
+        if(pk<=ck)
+            c(ck)=c(ck)+p(pk);
+        end
+    end
+end
+
+
+%J is the HISTOGRAM EQUALIZED IMAGE
+%J[m,n] = 255*c{pic1[m,n]}
+%Histogram Equalization: Transforming the input image so that 
+%the output image has an "equalized" histogram. 
+%Using the Cumulative Distribution Function (CDF) of the histogram of the input
+%image as the intensity transformation function.
+
+for m=1 : x
+    for n=1 : y  
+        J(m,n)=255*c(pic2gray(m,n)+1);
+    end
+end
+
+imwrite(J,'z2pic2GrayOptimized.tif','tiff')
+
+
+% GAUSSIAN GENERATOR 
+%we will use this gaussian grid as a gaussian filter to smooth our image
+N=5;
+sigma=1;
+ind = -floor(N/2) : floor(N/2);
+[X Y] = meshgrid(ind, ind);
+% Create Gaussian Mask
+gFilter = exp(-(X.^2 + Y.^2) / (2*sigma*sigma));
+% Normalize so that total area (sum of all weights) is 1
+gFilter = gFilter / sum(gFilter(:));
+
+filtered = J;
+
+%Smoothing by Applying the gFilter
+for i=3:x-2
+    for j=3:y-2
+    convolution =(filtered(i-2,j-2)*gFilter(1,1))  +(filtered(i-2,j-1)*gFilter(1,2)) +(filtered(i-2,j)*gFilter(1,3)) +(filtered(i-2,j+1)*gFilter(1,4))  +(filtered(i-2,j+2)*gFilter(1,5))+(filtered(i-1,j-2)*gFilter(2,1)) +(filtered(i-1,j-1)*gFilter(2,2))   +(filtered(i-1,j)*gFilter(2,3)) +(filtered(i-1,j+1)*gFilter(2,4))  +(filtered(i-1,j+2)*gFilter(2,5))+(filtered(i,j-2)*gFilter(3,1))   +(filtered(i,j-1)*gFilter(3,2)) +(filtered(i,j)*gFilter(3,3))   +(filtered(i,j+1)*gFilter(3,4))  +(filtered(i,j+2)*gFilter(3,5))+(filtered(i+1,j-2)*gFilter(4,1)) +(filtered(i+1,j-1)*gFilter(4,2)) +(filtered(i+1,j)*gFilter(3,3)) +(filtered(i+1,j+1)*gFilter(4,4))  +(filtered(i+1,j+2)*gFilter(4,5))+(filtered(i+2,j-2)*gFilter(5,1)) +(filtered(i+2,j-1)*gFilter(5,2)) +(filtered(i+2,j)*gFilter(3,3)) +(filtered(i+2,j+1)*gFilter(5,4))  +(filtered(i+2,j+2)*gFilter(5,5));
+   
+    filtered(i,j)= convolution;
+        
+    end
+end
+
+imwrite(filtered,'z3filteredPic.tif','tiff')
+
+
+%In order to estimate the gradient magnitude and the 
+%direction at a specific pixel f(i,j).
+%the gradient vector at pixel f(i,j) is made up of 
+%a horizontal and vertical component Gradient vector: (fx,fy)
+%where	fx = f(i+1,j)-f(i,j) 
+%and 	fy = f(i,j+1) - f(i,j)
+
+%The gradient Magnitude is 
+%Gradient magnitude = sqrt(  (fx)^2 + (fy)^2)
+
+%The gradient direction can be calculated by 
+%atan(fy/fx) radians
+gradientMag= zeros(x,y);
+gradientDir = zeros(x,y);
+fx=0;
+fy=0;
+
+for i=3:x-2
+    for j=3:y-2
+        fx=filtered(i+1,j)-filtered(i,j);
+        fy=filtered(i,j+1)-filtered(i,j);
+        gradientMag(i,j)=sqrt((fx)^2 + (fy)^2);
+        gradientDir(i,j)=radtodeg(atan(fy/fx));
+    end
+end
+
+
+%Next we get rid of noise by taking a threshold of the pixels
+%THRESHOLD GENERATOR:
+%Tavg = the average luminence value of all edge points
+
+
+Tavg=0;
+count=0;
+for i=3:x-2
+    for j=3:y-2
+       Tavg =+ gradientMag(i,j);
+       count =+ 1;
+        
+    end
+end
+
+Tavg= Tavg/count;
+
+
+
+%Thigh = the average luminance of all edge points that have a luminence higher than Tavg 
+%Tlow = the average luminance of all edge points that have a luminence lower than Tavg 
+%Thigh will be the threshold value that an edge (a connect region of edge points) needs to reach at least once in order to avoid being suppressed. 
+%Tlow is the threshold of the minimun intensity an edge point must have in order to remain part of the connected region of edge points. 
+Thigh=0;
+Tlow=0;
+countHigh=0;
+countLow=0;
+
+for i=3:x-2
+    for j=3:y-2
+      if(gradientMag(i,j)>Tavg)
+          Thigh =+ gradientMag(i,j);
+          countHigh =+ 1;
+      else
+          Tlow =+ gradientMag(i,j);
+          countLow =+ 1;
+      end
+        
+    end
+end
+
+Thigh = Thigh/countHigh;
+Tlow = Tlow/countLow;
+
+
+
+
+
+
+
+
+
