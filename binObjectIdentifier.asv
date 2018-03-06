@@ -1,0 +1,135 @@
+pic1 = imread('binaryShapes.tif');
+[m,n] =size(pic1);
+n=n/4;
+B=zeros(m,n);
+C=zeros(m,n);
+for i =1:m
+	for j = 1:n
+        if(pic1(i,j)==0)
+        B(i,j)=255;
+        end
+    end
+end
+imwrite(B,'picB.tif','tiff');
+
+f= zeros(1,255);
+numbersFound = zeros(1,255);
+l=2;
+
+for i =2:m-1
+	for j = 2:n-1
+		if(B(i,j)==255)
+			a = B(i,j);
+			b= B(i,j-1);
+			c=B(i-1,j);
+			if((b==0)&(c==0))
+				B(i,j)=l;
+				l=l+1;
+            elseif((b==0)&(c>1))
+				B(i,j)=c;
+            elseif((b>1)&(c==0))
+				B(i,j)=b;
+            elseif((b>1)&(c>1))
+				if(b==c)
+				
+                    B(i,j)=b;
+				else
+					while(f(b)>0)
+						b=f(b);%find root
+					end
+					while(f(c)>0)
+						c=f(c);%find root
+					end
+					if(b==c)
+						B(i,j)=b;
+					else
+						if(b<c)
+							B(i,j)=b;
+							f(c)=b;
+						else
+							B(i,j)=c;
+							f(b)=c;
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+
+
+
+
+for i=1:m
+	for j=1:n
+		if(B(i,j)>0)
+			k = B(i,j);
+			while(f(k)>0)
+				k=f(k);
+			end
+			B(i,j)=k;
+		end
+	end
+end
+
+while(j==k)
+	while(f(j)>0)
+		j=f(j);
+	end
+	while(f(k)>0)
+		k=f(k);
+	end
+	if(j~=k)		
+		f(j)=k
+	end
+end
+
+for i=1:m
+	for j=1:n
+        if(B(i,j)>0)
+        numbersFound(B(i,j))=1;
+        end
+    end
+end
+
+NumberOfObjects=0;
+for j=1:255
+    if(numbersFound(j)==1)
+        fprintf('%i\n', j)
+    end
+    NumberOfObjects=NumberOfObjects+numbersFound(j);
+end
+
+labels=zeros(1,NumberOfObjects);
+
+for j=1
+    if(numbersFound(j)==1)
+        fprintf('%i\n', j)
+    end
+    NumberOfObjects=NumberOfObjects+numbersFound(j);
+end
+
+
+
+
+for i=1:m
+	for j=1:n
+        if(B(i,j)>0)
+        numbersFound(B(i,j))=1;
+        end
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
