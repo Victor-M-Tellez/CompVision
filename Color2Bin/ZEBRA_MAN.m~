@@ -1,0 +1,357 @@
+
+pic0 = imread('a1.jpeg');
+pic1 = imread('a2.jpeg');
+pic2 = imread('a3.jpeg');
+pic3 = imread('a4.jpeg');
+pic5 = imread('a6.jpeg');
+
+[x,y,z] = size(pic0);
+gray0 = uint8(zeros(x,y));
+gray1 = uint8(zeros(x,y));
+gray2 = uint8(zeros(x,y));
+gray3 = uint8(zeros(x,y));
+gray5 = uint8(zeros(x,y));
+
+Canvas = uint8(zeros(x,y));
+threshholdScissor = 90;
+N=2;
+sigma=100;
+ind = -floor(N/2) : floor(N/2);
+
+for i=1 : x
+    for j=1 : y  
+        gray0(i,j)= (.33*pic0(i,j,1)+.33*pic0(i,j,2)+.34*pic0(i,j,3));
+        gray1(i,j)= (.33*pic1(i,j,1)+.33*pic1(i,j,2)+.34*pic1(i,j,3));
+        gray2(i,j)= (.33*pic2(i,j,1)+.33*pic2(i,j,2)+.34*pic2(i,j,3));
+        gray3(i,j)= (.33*pic3(i,j,1)+.33*pic3(i,j,2)+.34*pic3(i,j,3));
+        gray5(i,j)= (.33*pic5(i,j,1)+.33*pic5(i,j,2)+.34*pic5(i,j,3));
+    end
+end
+
+
+%
+%Zebra1
+%
+background = MakeBackground(Canvas,gray0,gray1,gray2,gray3,gray5);
+
+
+%
+%Zebra2
+%
+%gray3 will be our Present pic
+scissor= Scissors(Canvas,gray3,background,threshholdScissor);
+
+
+%
+%Zebra3
+%
+
+% GAUSSIAN GENERATOR 
+%we will use this gaussian grid as a gaussian filter to smooth our image
+N=2;
+sigma=100;
+ind = -floor(N/2) : floor(N/2);
+[X Y] = meshgrid(ind, ind);
+% Create Gaussian Mask
+gFilter = exp(-(X.^2 + Y.^2) / (2*sigma*sigma));
+% Normalize so that total area (sum of all weights) is 1
+gFilter = gFilter / sum(gFilter(:));
+
+filtered=Smoothing(Canvas,N,sigma,ind)
+imwrite(filtered,'Zebra3_filteredPic.tif','tiff');
+
+
+
+%
+%Zebra4
+%
+
+
+%SIZE FILTER
+%
+
+sizeFiltered=double(filtered);
+for i=4:x-3
+    for j=4:y-3
+        %convolution =(filtered(i-1,j-1)*gFilter(1,1))+(filtered(i-1,j)*gFilter(1,2)) +(filtered(i-1,j+1)*gFilter(1,3)) +(filtered(i,j-1)*gFilter(2,1)) +(filtered(i,j)*gFilter(2,2))+(filtered(i,j+1)*gFilter(2,3))+(filtered(i+1,j-1)*gFilter(3,1)) +(filtered(i+1,j)*gFilter(3,2)) +(filtered(i+1,j+1)*gFilter(3,3)) ; 
+        %filtered(i,j)= convolution;
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         %sizeFiltered(i,j)= matrixtotal;
+         if(matrixtotal<(9000))
+             sizeFiltered(i,j)=0;
+        end
+    end
+end
+imwrite(sizeFiltered,'Zebra4_filteredSize.tif','tiff');
+
+
+
+
+
+
+
+
+
+
+%
+%Zebra5
+%
+
+
+
+
+
+
+
+%
+%Expanding and shriking contractions
+%
+filtered = sizeFiltered;
+expansion=double(sizeFiltered);
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+filtered=expansion;
+
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal>10)
+             expansion(i,j)=190;
+        end
+    end
+end
+imwrite(expansion,'Zebra5_Expansion.tif','tiff');
+
+
+
+
+%
+%Zebra6
+%
+
+
+
+filtered=expansion;
+shriking= filtered;
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal<9000)
+             shriking(i,j)=0;
+        end
+    end
+end
+filtered=shriking;
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal<9000)
+             shriking(i,j)=0;
+        end
+    end
+end
+filtered=shriking;
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal<9000)
+             shriking(i,j)=0;
+        end
+    end
+end
+
+filtered=shriking;
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal<9000)
+             shriking(i,j)=0;
+        end
+    end
+end
+
+filtered=shriking;
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal<9000)
+             shriking(i,j)=0;
+        end
+    end
+end
+filtered=shriking;
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal<9000)
+             shriking(i,j)=0;
+        end
+    end
+end
+filtered=shriking;
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal<9000)
+             shriking(i,j)=0;
+        end
+    end
+end
+filtered=shriking;
+for i=4:x-3
+    for j=4:y-3
+      
+         matrixtotal= double(filtered(i-3,j-3))+double(filtered(i-3,j-2))+double(filtered(i-3,j-1))+double( filtered(i-3,j)) +double(filtered(i-3,j+1))+double(filtered(i-3,j+2))+double(filtered(i-3,j+3))+double(filtered(i-2,j-3))+double(filtered(i-2,j-2))+double(filtered(i-2,j-1))+ double(filtered(i-2,j)) +double(filtered(i-2,j+1))+double(filtered(i-2,j+2))+double(filtered(i-1,j+3))+double(filtered(i-1,j-3))+double(filtered(i-1,j-2))+double(filtered(i-1,j-1))+ double(filtered(i-1,j)) +double(filtered(i-1,j+1))+double(filtered(i-1,j+2))+double(filtered(i-1,j+3))+double(filtered(i  ,j-3))+double(filtered(i  ,j-2))+double(filtered(i  ,j-1)) +double(filtered(i,j))   +double(filtered(i,j+1))+double(filtered(i  ,j+2))+double(filtered(i  ,j+3))+double(filtered(i+1,j-3))+double(filtered(i+1,j-2))+double(filtered(i+1,j-1)) +double(filtered(i+1,j)) +double(filtered(i+1,j+1))+double(filtered(i+1,j+2))+double(filtered(i+1,j+3))+double(filtered(i+2,j-3))+double(filtered(i+2,j-2))+double(filtered(i+2,j-1)) +double(filtered(i+2,j)) +double(filtered(i+2,j+1))+double(filtered(i+2,j+2))+double(filtered(i+2,j+3))+double(filtered(i+3,j-3))+double(filtered(i+3,j-2))+double(filtered(i+3,j-1)) +double(filtered(i+3,j)) +double(filtered(i+3,j+1))+double(filtered(i+3,j+2))+double(filtered(i+3,j+3));
+         
+         if(matrixtotal<9000)
+             shriking(i,j)=0;
+        end
+    end
+end
+imwrite(shriking,'Zebra6_Shrink.tif','tiff');
