@@ -1,0 +1,405 @@
+
+
+@@_________________________________________COMPUTER VISION SYSTEM METHODS
+
+I)Image acquisition – 
+	A] A digital image is produced by one or several image sensors 
+		1) light-sensitive cameras
+		2) range sensors
+		3) tomography devices
+		4) radar
+		5) ultra-sonic cameras
+		6) etc. 
+
+	
+	B] Depending on the type of sensor, the resulting image data can be
+		1) ordinary 2D image, 
+		2) a 3D volume, 
+		3) an image sequence. 
+
+	C] The pixel values 
+		1) typically correspond to light intensity in one or several spectral bands 
+			i) gray images 
+			ii) colour images
+		2) can also be related to various physical measures 
+			i) depth, 
+			ii) absorption or reflectance of: 
+				a) sonic 
+				b) or electromagnetic waves
+				c) or nuclear magnetic resonance
+
+II)Pre-processing – Before a computer vision method can be applied to image data in order to extract some specific piece of information, 
+	it is usually necessary to process the data in order to assure that it satisfies certain assumptions implied by the method. 
+	Examples are
+        	A] Re-sampling in order to assure that the image coordinate system is correct.
+        	B] Noise reduction in order to assure that sensor noise does not introduce false information.
+        	C] Contrast enhancement to assure that relevant information can be detected.
+        	D] Scale space representation to enhance image structures at locally appropriate scales.
+
+III)Feature extraction – Image features at various levels of complexity are extracted from the image data.[21] 
+	Typical examples of such features are
+        	A] Lines, edges and ridges.
+        	B] Localized interest points such as corners, blobs or points.
+		C] Texture, shape or motion.
+
+IV)Detection/segmentation – At some point in the processing a decision is made about which image points or regions of the image are 
+	relevant for further processing.[21] Examples are
+        A] Selection of a specific set of interest points
+        B] Segmentation of one or multiple image regions which contain a specific object of interest.
+        C] Segmentation of image into nested scene architecture comprised foreground, object groups, single objects 
+	   or salient object parts (also referred to as spatial-taxon scene hierarchy)[22]
+
+V)High-level processing – At this step the input is typically a small set of data, for example a set of points or an image region which is assumed to contain a specific object.[21] The remaining processing deals with, for example:
+        A] Verification that the data satisfy model-based and application specific assumptions.
+        B] Estimation of application specific parameters, such as object pose or object size.
+        C] Image recognition – classifying a detected object into different categories.
+        D] Image registration – comparing and combining two different views of the same object.
+
+VI)Decision making Making the final decision required for the application,[21] for example:
+        A] Pass/fail on automatic inspection applications
+        B] Match / no-match in recognition applications
+        C] Flag for further human review in medical, military, security and recognition applications
+
+
+
+
+
+
+
+
+
+1) COMPUTER VISION SUBSYSTEMS
+2) IMAGE-UNDERSTANDING SYSTEMS
+3) CHARACTERIZATIONS__OF Different Fields within the Discipline:
+4) GENERAL DIMENSIONALLY REDUCTION TECHNIQUES
+5) IMAGE PROCESSING
+
+
+A) Image enhancement
+B) Transformations
+C) Filtering, Fourier and wavelet transforms and image compression
+D) Color vision
+E) Feature extraction
+F) Pose estimation
+G) Registration
+H) Visual Recognition
+
+
+MOTION ALGORITHM
+Motion Detection
+Tracking
+Optical Flow
+Background Subtraction
+Feature Tracking
+
+
+
+
+
+
+
+ an easy way to align these images using AlignMTB. This algorithm converts all the images to median threshold bitmaps (MTB). An MTB for an image is calculated by assigning the value 1 to pixels brighter than median luminance and 0 otherwise. An MTB is invariant to the exposure time. Therefore, the MTBs can be aligned without requiring us to specify the exposure time.
+
+spurious resolution:the apparent creation of structures that are not present in the original image. 
+
+The key to adjusting an operator to a certain scale seems to be altering the image resolution. We could re-sample a digital image at a low resolution to bring large-scale object into the range of, e.g.our 3×3 kernel. By decreasing the resolution of an image a 3×3 kernel can operate on larger-scale structures which it could not operate on in the original image. 
+
+HOW TO DECREASE THE RESOLUTION OF AN IMAGE-----> Pro: can operate on large scale objects---> Con:the occurrence of spurious resolution
+The resolution of an image can be decreased by merging the grey values of a block of pixels into the new grey value of a larger pixel. This  merging  can,e.g., be done  by averaging  grey  values,  by  taking  the center  pixel value, or by taking the maximum, minimum, modal, nearest neighbor value,
+etc.
+
+
+
+HOW TO DECREASE THE RESOLUTION OF AN IMAGE
+We are looking for an operation that lowers resolution but does not introduce new details into the image; i.e. avoids spurious resolution. 
+ANSWER: Resolution Lowering through convolution with a Gaussian.
+	after convolution with a Gaussian:
+		A] the number of pixels used does not change
+		B] the smallest recognizable detail in the image becomes larger, and it that sense the resolution is lower than before.  
+suppose we wish to lower the resolution of an image by some amount a, and after that by some amount b, then it should be possible to do this in one step, lowering the resolution by an amount a+b.
+
+The Gaussian scale space is called a one-parameter extension of the original image, The Gaussian scale space can be viewed as a stack of images, where the original image is at the bottom of the stack (f0(x,y) = f(x,y)), and the image resolution gets lower as we rise in the stack
+
+Lowering the resolution by Gaussian convolution: the top left image is convolved
+with a Gaussian kernel of increasing width (other images). 
+As the Width of the Gaussian Kernel Increases when we have a Gaussian Convolution we Lower the resolution even more
+The bigger the width of the kernel The lower the resolution becomes 
+
+
+
+******************************************************************************************************************************************
+*******************************************************************************************************************
+******************************************************************************************************************************************
+******************************************************************************************************************************************
+
+
+@@_________________________________________COMPUTER VISION SUBSYSTEMS
+
+I} Image enhancement
+        A] Image denoising
+        B] Image histogram
+        C] Inpainting
+        D] Histogram equalization
+        E] Tone mapping:  
+		to map one set of colors to another to approx. the appearance of high-dynamic-range images in a medium that has a more limited dynamic range
+        F] Retinex: is an example of subjective constancy and a feature of the human color perception system which ensures that the perceived 
+			color of objects remains relatively constant under varying illumination conditions.
+        G] Gamma correction:a nonlinear operation used to encode and decode luminance or tristimulus values in video or still image systems
+        H] Anisotropic Diffusion (Perona-Malik equation):  is a non-linear and space-variant transformation of the original image
+		     > aims to reduce image noise without removing significant parts of the image content, typically edges, lines or other details etc.		     > produces a family of parameterized images, but each resulting image is a combination between the original image and a filter that 
+			depends on the local content of the original image. 
+II} Transformations
+        A] Affine transform
+        B] Homography (computer vision)
+        C] Hough transform
+        D] Radon transform
+        E] Walsh–Hadamard transform
+
+III} Filtering, Fourier and wavelet transforms and image compression
+        A] Image compression
+        B] Filter bank
+        C] Gabor filter
+        D] JPEG 2000
+        E] Adaptive filtering
+
+IV} Color vision
+        A] Visual perception
+        B] Human visual system model
+        C] Color matching function
+        D] Color space
+        E] Color appearance model
+        F] Color management system
+        G] Color mapping
+        H] Color model
+        I] Color profile
+
+V}Feature extraction
+        A] Active contour
+        B] Blob detection
+        C] Canny edge detector
+        D] Contour detection
+        E] Edge detection
+        F] Edge linking
+        G] Harris corner detector
+        H] Random sample consensus (RANSAC)
+        I] Scale-invariant feature transform (SIFT)
+
+VI}Pose estimation
+        A] Bundle adjustment
+        B] Articulated body pose estimation (BoPoE)
+        C] Direct linear transformation (DLT)
+        D] Epipolar geometry
+        E] Fundamental matrix
+        F] Pinhole camera model
+        G] Projective geometry
+        H] Trifocal tensor
+
+VII]Registration
+        A] Active appearance model (AAM)
+        B] Cross correlation
+        C] Geometric hashing
+        D] Graph cut segmentation
+        E] Least squares estimation
+        F] Image pyramid
+        G] Image segmentation
+        H] Level set method
+        I] Markov random fields
+        J] Medial axis
+        K] Motion field
+        M] Motion vector
+        N] Multispectral imaging
+        L] Normalized cut segmentation
+        O] Optical flow
+        P] Particle filtering
+        Q] Scale space
+
+VIII}Visual Recognition
+        A] Object Recognition
+        B] Scale-invariant feature transform (SIFT)
+        C] Gesture recognition
+        D] Bag of words model in computer vision
+        E] Kadir–Brady saliency detector
+        F] Eigenface
+
+******************************************************************************
+
+
+******************************************************************************************************
+
+@@_____________________IMAGE-UNDERSTANDING SYSTEMS
+
+Image-understanding systems (IUS) include three levels of abstraction as follows: 
+	1] Low level includes 
+		1A] image primitives such as 
+			1Ai] edges, 
+			1Aii]texture elements, 
+			1Aiii]or regions; 
+	2]intermediate level includes 
+		2A]boundaries, 
+		2B]surfaces and 
+		2C]volumes; 
+	3]high level includes 
+		3A] objects, 
+		3B] scenes, 
+		3C] or events. 
+
+The representational requirements in the designing of IUS for these levels are: 
+	A] representation of prototypical concepts, 	
+	B] concept organization, 
+	C] spatial knowledge, 
+	D] temporal knowledge, 
+	E] scaling, and 
+	F] description by comparison and differentiation.
+
+While inference refers to the process of deriving new, not explicitly represented facts from currently known facts, control refers to the process that selects which of the many inference, search, and matching techniques should be applied at a particular stage of processing. Inference and control requirements for IUS are: search and hypothesis activation, matching and hypothesis testing, generation and use of expectations, change and focus of attention, certainty and strength of belief, inference and goal satisfaction
+_________________________________________________________________________________________________________________________________________
+
+@@__CHARACTERIZATIONS_OF Different Fields within the Discipline:
+
+      I] Image processing and image analysis:
+		1] do NOT require assumptions nor produce interpretations about the image content. 
+		2] tend to focus on 2D images
+			A] how to transform one image to another: e.g., 
+				  i] By pixel-wise operations such as 
+					contrast enhancement 
+				 ii] By local operations such as 
+					edge extraction
+					noise removal 
+				iii] By geometrical transformations such as 
+					rotating the image. 
+		
+
+     II] Computer vision: 
+		1] Computer vision often relies on more or less complex assumptions about the scene depicted in an image.
+		2] Includes 3D analysis from 2D images. This analyzes the 3D scene projected onto one or several images, e.g., 
+			A] how to reconstruct structure or other information about the 3D scene from one or several images. 
+
+
+    III] Machine vision: 
+		1] Machine Vision is the process of applying a range of technologies & methods to provide: 
+			A] imaging-based automatic inspection, 
+			B] process control and 
+			C] robot guidance in industrial applications.
+		2] Machine vision tends to focus on applications This implies that 
+			A] The image sensor technologies and control theory often are integrated with the processing of image data to 
+			    control a robot and that real-time processing is emphasised by means of efficient implementations in hardware and software. 
+			B] The external conditions such as lighting can be and are often more controlled in machine vision than they are in 
+			    general computer vision, which can enable the use of different algorithms.
+
+
+     IV] Imaging:
+		1] Imaging primarily focus on the process of producing images, but sometimes also deals with processing and analysis of images. For example, 			A] medical imaging includes substantial work on the analysis of image data in medical applications.
+
+
+      V] Pattern recognition: 
+		1] Pattern recognition uses various methods to extract information from signals in general, mainly based on: 
+			A] statistical approaches 
+			B] artificial neural networks. 
+		2] A significant part of this field is devoted to applying these methods to image data.
+_________________________________________________________________________________________________________________________________________
+feature extraction starts from an initial set of measured data and builds derived values (features) intended to be informative and non-redundant, facilitating the subsequent learning and generalization steps, and in some cases leading to better human interpretations. Feature extraction is related to dimensionality reduction.
+
+GENERAL DIMENSIONALLY REDUCTION TECHNIQUES
+     1) Independent component analysis
+     2) Isomap
+     3) Kernel PCA
+     4) Latent semantic analysis
+     5) Partial least squares
+     6) Principal component analysis
+     7) Multifactor dimensionality reduction
+     8) Nonlinear dimensionality reduction
+     9) Multilinear Principal Component Analysis
+    10) Multilinear subspace learning
+    11) Semidefinite embedding
+    12) Autoencoder
+
+
+IMAGE PROCESSING
+One very important area of application is image processing, in which algorithms are used to detect and isolate various desired portions or features of a digitized image or video stream.
+
+	I) LOW-LEVEL
+		I.A] Edge detection
+		I.B] Corner detection
+		I.C] Blob detection
+		I.D] Ridge detection
+		I.E] Scale-invariant feature transform
+		
+	II) CURVATURE
+		II.A] Edge direction
+		II.B] changing intensity 
+		II.C] autocorrelation
+
+	III) IMAGE MOTION
+		III.A] Motion detection. 
+		III.B] Area based, differential approach. 
+		III.C] Optical flow.
+
+	IV) SHAPED BASED
+		IV.A] Thresholding	
+			IVA.1]Histogram shape-based methods:= where
+				IVA1.i] the peaks of the smoothed histogram are analyzed
+				IVA1.ii] the valleys of the smoothed histogram are analyzed
+				IVA1.iii] the curvatures of the smoothed histogram are analyzed
+			
+			IVA.2] Clustering-based methods::= where 
+				IVA2.i] the gray-level samples are clustered in two parts as background and foreground (object), 
+				IVA2.ii] alternately are modeled as a mixture of two Gaussians
+
+			IVA.3] Entropy-based methods::= result in algorithms that use 
+				IVA3.i] the entropy of the foreground and background regions, 
+				IVA3.ii] the cross-entropy between the original and binarized image
+
+			IVA.4] Object Attribute-based methods::= search a measure of similarity between the gray-level and the binarized images, such as 
+				IVA4.i]fuzzy shape similarity, 
+				IVA4.ii]edge coincidence, etc.
+			
+			IVA.5] Spatial methods::=use higher-order probability distribution and/or correlation between pixels
+
+			IVA.6] Local methods::= adapt the threshold value on each pixel to the local image characteristics. 
+				  A different T is selected for each pixel in the image.
+					IVA4.i] Blob extraction
+					IVA4.ii] Template matching
+					IVA4.iii] Hough transform
+        					a) Lines
+        					b) Circles/ellipses
+        					c) Arbitrary shapes (generalized Hough transform)
+        					d) Works with any parameterizable feature (class variables, cluster detection, etc..)
+
+	V) FLEXIBLE METHODS
+		V.A] Deformable, parameterized shapes
+		V.B] Active contours (snakes)
+
+
+
+
+
+
+https://www.uio.no/studier/emner/matnat/ifi/INF4300/h09/undervisningsmateriale/hough09.pdf
+http://www.cs.umd.edu/~djacobs/CMSC426/Blob.pdf
+https://en.wikipedia.org/wiki/Background_subtraction
+https://en.wikipedia.org/wiki/Edge_detection
+https://en.wikipedia.org/wiki/Blob_detection
+https://en.wikipedia.org/wiki/Corner_detection
+https://en.wikipedia.org/wiki/Optical_flow#Optical_flow_sensor
+http://www2.ece.ohio-state.edu/~aleix/OpticalFlow.pdf
+http://www.societyofrobots.com/programming_computer_vision_tutorial_pt4.shtml#background_subtraction
+http://www.cs.uu.nl/docs/vakken/ibv/lectures/infoibv_slides_09.pdf
+http://cmp.felk.cvut.cz/~flachbor/teaching/cv_int_rob/edges_int_poi.pdf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
