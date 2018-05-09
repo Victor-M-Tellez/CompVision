@@ -1,0 +1,16 @@
+a blob is defined as a region of connected pixels.
+
+Blob analysis is the identification and study of these regions in an image. The algorithm discerns pixels by their value and places them in one of two categories. foreground (typically a pixel has a non-zero value) or the background (pixels with a zero value).
+
+The performance of a blob analysis operation depends on a successful segmentation of the image that is, separating the good blobs from the background and each other as well as eliminating everything else in the image that is not of interest. Segmentation involves a binarization operation
+
+1} Randomly sample the image for starting locations
+2}perform the recursive median search to find blob boundaries
+3}Output blobs as upper left, lower right corners and color
+
+http://www.ctralie.com/Teaching/EdgeCornerBlob/
+http://www.cs.princeton.edu/courses/archive/fall09/cos429/notes/
+http://www.cs.princeton.edu/courses/archive/fall09/cos429/notes/cos429_f09_lecture03_filtering.pdf
+http://www.cs.princeton.edu/courses/archive/fall09/cos429/notes/cos429_f09_lecture04_feature.pdf
+http://www.cs.princeton.edu/courses/archive/fall09/cos429/notes/cos429_f09_lecture08_motion.pdf
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4934208/
