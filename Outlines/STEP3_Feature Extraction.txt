@@ -1,0 +1,31 @@
+
+III)Feature extraction – 
+	III.A] Image features at various levels of complexity are extracted from the image data. Typical examples of such features are:
+        	IIIA.1] 
+			IIIA1.i]   Lines::= we will use hough transform to find the lines 
+			IIIA1.ii]  edges::=the points where the gradient magnitude assumes a local maximum in the gradient direction
+						> Borders between areas of high and low gray value.
+			IIIA1.iii] ridges::= are formed with the points where the intensity gray level reaches a local extremum in 
+						   a given direction. Thin lines darker or brighter than their neighborhood.
+						> if we do an edge detection on a ridge area we will get a double line, 
+						   one from each side of the ridge.
+
+		*The purpose of ridge detection is usually to capture the major axis of symmetry of an elongated object*
+		*the purpose of edge detection is usually to capture the boundary of the object*
+        	IIIA.2] Localized interest points such as 
+			IIIA2.i]   corners::=
+						> A corner can be defined as the intersection of two edges. 
+						> A corner can also be defined as a point for which there are two dominant and different 
+						    edge directions in a local neighbourhood of the point. 
+			IIIA2.ii]  blobs::=
+						> a group of connecting pixels that are related to each other. 
+						> useful for identifying seperate objects in a scene.
+		
+		IIIA.3] Difficult features to extract:
+			IIIA3.i]   Motion
+					> Optical flow is used to compute the motion of the pixels of an image sequence. 
+					   It provides a dense (point to point) pixel correspondance
+
+			IIIA3.ii]  shape 
+			IIIA3.iii] Texture
+

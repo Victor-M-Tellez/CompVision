@@ -1,0 +1,20 @@
+I)Image acquisition – 
+	I.A] A digital image is produced by one or several image sensors 
+		IA.1) light-sensitive cameras: Raspberry pi
+		IA.2) light-sensitive cameras: usb port camera
+		 
+	I.B] Depending on the type of sensor, the resulting image data can be:
+		IC.1) an ordinary 2D image
+		IC.2) a 3D volume
+		IC.3) an image sequence
+
+	I.C] The pixel values:
+		IC.1) typically correspond to light intensity in one or several spectral bands 
+			IC1.i) gray images 
+			IC1.ii) color images
+		IC.2) can also be related to various physical measures 
+			IC2.i) depth, 
+			IC2.ii) absorption or reflectance of: 
+				IC2ii.a) sonic 
+				IC2ii.b) or electromagnetic waves
+				IC2ii.c) or nuclear magnetic resonance

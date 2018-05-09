@@ -1,0 +1,20 @@
+IV)Detection/segmentation – At some point in the processing a decision is made about which image points or regions of the image are 
+	relevant for further processing.Examples are
+        IV.A] Selection of a specific set of interest points
+        IV.B] Segmentation of one or multiple image regions which contain a specific object of interest.
+        IV.C] Segmentation of image into nested scene architecture comprised foreground, object groups, single objects 
+	        or salient object parts (also referred to as spatial-taxon scene hierarchy)[22]
+
+
+
+
+
+V)High-level processing – At this step the input is typically a small set of data, for example a set of points or an image region which is assumed to contain a specific object.[21] The remaining processing deals with, for example:
+        A] Verification that the data satisfy model-based and application specific assumptions.
+        B] Image recognition – classifying a detected object into different categories.
+      
+
+
+VI)Decision making Making the final decision required for the application,[21] for example:
+        A] Pass/fail on automatic inspection applications
+
