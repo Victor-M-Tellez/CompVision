@@ -1,0 +1,345 @@
+
+@@_________________________________________COMPUTER VISION SUBSYSTEMS
+
+I} Image enhancement
+        A] Image denoising
+        B] Image histogram
+        C] Inpainting
+        D] Histogram equalization
+        E] Tone mapping
+        F] Retinex
+        G] Gamma correction
+        H] Anisotropic Diffusion (Perona-Malik equation)
+
+II} Transformations
+        A] Affine transform
+        B] Homography (computer vision)
+        C] Hough transform
+        D] Radon transform
+        E] Walsh–Hadamard transform
+
+III} Filtering, Fourier and wavelet transforms and image compression
+        A] Image compression
+        B] Filter bank
+        C] Gabor filter
+        D] JPEG 2000
+        E] Adaptive filtering
+
+IV} Color vision
+        A] Visual perception
+        B] Human visual system model
+        C] Color matching function
+        D] Color space
+        E] Color appearance model
+        F] Color management system
+        G] Color mapping
+        H] Color model
+        I] Color profile
+
+V}Feature extraction
+        A] Active contour
+        B] Blob detection
+        C] Canny edge detector
+        D] Contour detection
+        E] Edge detection
+        F] Edge linking
+        G] Harris corner detector
+        H] Random sample consensus (RANSAC)
+        I] Scale-invariant feature transform (SIFT)
+
+VI}Pose estimation
+        A] Bundle adjustment
+        B] Articulated body pose estimation (BoPoE)
+        C] Direct linear transformation (DLT)
+        D] Epipolar geometry
+        E] Fundamental matrix
+        F] Pinhole camera model
+        G] Projective geometry
+        H] Trifocal tensor
+
+VII]Registration
+        A] Active appearance model (AAM)
+        B] Cross correlation
+        C] Geometric hashing
+        D] Graph cut segmentation
+        E] Least squares estimation
+        F] Image pyramid
+        G] Image segmentation
+        H] Level set method
+        I] Markov random fields
+        J] Medial axis
+        K] Motion field
+        M] Motion vector
+        N] Multispectral imaging
+        L] Normalized cut segmentation
+        O] Optical flow
+        P] Particle filtering
+        Q] Scale space
+
+VIII}Visual Recognition
+
+        A] Object Recognition
+        B] Scale-invariant feature transform (SIFT)
+        C] Gesture recognition
+        D] Bag of words model in computer vision
+        E] Kadir–Brady saliency detector
+        F] Eigenface
+
+******************************************************************************
+
+
+
+@@_________________________________________COMPUTER VISION SYSTEM METHODS
+
+I)Image acquisition – 
+	A] A digital image is produced by one or several image sensors 
+		1) light-sensitive cameras
+		2) range sensors
+		3) tomography devices
+		4) radar
+		5) ultra-sonic cameras
+		6) etc. 
+
+	
+	B] Depending on the type of sensor, the resulting image data can be
+		1) ordinary 2D image, 
+		2) a 3D volume, 
+		3) an image sequence. 
+
+	C] The pixel values 
+		1) typically correspond to light intensity in one or several spectral bands 
+			i) gray images 
+			ii) colour images
+		2) can also be related to various physical measures 
+			i) depth, 
+			ii) absorption or reflectance of: 
+				a) sonic 
+				b) or electromagnetic waves
+				c) or nuclear magnetic resonance
+
+II)Pre-processing – Before a computer vision method can be applied to image data in order to extract some specific piece of information, 
+	it is usually necessary to process the data in order to assure that it satisfies certain assumptions implied by the method. 
+	Examples are
+        	A] Re-sampling in order to assure that the image coordinate system is correct.
+        	B] Noise reduction in order to assure that sensor noise does not introduce false information.
+        	C] Contrast enhancement to assure that relevant information can be detected.
+        	D] Scale space representation to enhance image structures at locally appropriate scales.
+III)Feature extraction – Image features at various levels of complexity are extracted from the image data.[21] 
+	Typical examples of such features are
+        	A] Lines, edges and ridges.
+        	B] Localized interest points such as corners, blobs or points.
+		C] Texture, shape or motion.
+
+IV)Detection/segmentation – At some point in the processing a decision is made about which image points or regions of the image are 
+	relevant for further processing.[21] Examples are
+        A] Selection of a specific set of interest points
+        B] Segmentation of one or multiple image regions which contain a specific object of interest.
+        C] Segmentation of image into nested scene architecture comprised foreground, object groups, single objects 
+	   or salient object parts (also referred to as spatial-taxon scene hierarchy)[22]
+
+V)High-level processing – At this step the input is typically a small set of data, for example a set of points or an image region which is assumed to contain a specific object.[21] The remaining processing deals with, for example:
+        A] Verification that the data satisfy model-based and application specific assumptions.
+        B] Estimation of application specific parameters, such as object pose or object size.
+        C] Image recognition – classifying a detected object into different categories.
+        D] Image registration – comparing and combining two different views of the same object.
+
+VI)Decision making Making the final decision required for the application,[21] for example:
+        A] Pass/fail on automatic inspection applications
+        B] Match / no-match in recognition applications
+        C] Flag for further human review in medical, military, security and recognition applications
+******************************************************************************************************
+
+@@_____________________IMAGE-UNDERSTANDING SYSTEMS
+
+Image-understanding systems (IUS) include three levels of abstraction as follows: 
+	1] Low level includes 
+		1A] image primitives such as 
+			1Ai] edges, 
+			1Aii]texture elements, 
+			1Aiii]or regions; 
+	2]intermediate level includes 
+		2A]boundaries, 
+		2B]surfaces and 
+		2C]volumes; 
+	3]high level includes 
+		3A] objects, 
+		3B] scenes, 
+		3C] or events. 
+
+The representational requirements in the designing of IUS for these levels are: 
+	A] representation of prototypical concepts, 	
+	B] concept organization, 
+	C] spatial knowledge, 
+	D] temporal knowledge, 
+	E] scaling, and 
+	F] description by comparison and differentiation.
+
+While inference refers to the process of deriving new, not explicitly represented facts from currently known facts, control refers to the process that selects which of the many inference, search, and matching techniques should be applied at a particular stage of processing. Inference and control requirements for IUS are: search and hypothesis activation, matching and hypothesis testing, generation and use of expectations, change and focus of attention, certainty and strength of belief, inference and goal satisfaction
+_________________________________________________________________________________________________________________________________________
+
+@@__CHARACTERIZATIONS:
+
+    Image processing and image analysis tend to focus on 2D images, how to transform one image to another, 
+		e.g., by pixel-wise operations such as contrast enhancement, local operations such as edge extraction or noise removal, 
+		or geometrical transformations such as rotating the image. This characterization implies that image processing/analysis 
+		neither require assumptions nor produce interpretations about the image content.
+
+    Computer vision includes 3D analysis from 2D images. This analyzes the 3D scene projected onto one or several images, e.g., 
+		how to reconstruct structure or other information about the 3D scene from one or several images. Computer vision 
+		often relies on more or less complex assumptions about the scene depicted in an image.
+
+    Machine vision is the process of applying a range of technologies & methods to provide imaging-based automatic inspection, process 
+		control and robot guidance[17] in industrial applications.[18] 
+		Machine vision tends to focus on applications, mainly in manufacturing, e.g., vision based robots and systems for vision 
+		based inspection or measurement. This implies that image sensor technologies and control theory often are integrated with 
+		the processing of image data to control a robot and that real-time processing is emphasised by means of efficient
+		implementations in hardware and software. It also implies that the external conditions such as lighting can be and are 
+		often more controlled in machine vision than they are in general computer vision, 
+		which can enable the use of different algorithms.
+
+    There is also a field called imaging which primarily focus on the process of producing images, 
+		but sometimes also deals with processing and analysis of images. 
+		For example, medical imaging includes substantial work on the analysis of image data in medical applications.
+
+    Finally, pattern recognition is a field which uses various methods to extract information from signals in general, 
+		mainly based on statistical approaches and artificial neural networks. 
+		A significant part of this field is devoted to applying these methods to image data.
+_________________________________________________________________________________________________________________________________________
+feature extraction starts from an initial set of measured data and builds derived values (features) intended to be informative and non-redundant, facilitating the subsequent learning and generalization steps, and in some cases leading to better human interpretations. Feature extraction is related to dimensionality reduction.
+
+GENERAL DIMENSIONALLY REDUCTION TECHNIQUES
+     1) Independent component analysis
+     2) Isomap
+     3) Kernel PCA
+     4) Latent semantic analysis
+     5) Partial least squares
+     6) Principal component analysis
+     7) Multifactor dimensionality reduction
+     8) Nonlinear dimensionality reduction
+     9) Multilinear Principal Component Analysis
+    10) Multilinear subspace learning
+    11) Semidefinite embedding
+    12) Autoencoder
+
+
+IMAGE PROCESSING
+One very important area of application is image processing, in which algorithms are used to detect and isolate various desired portions or features of a digitized image or video stream.
+
+	LOW-LEVEL
+		A] Edge detection
+		B] Corner detection
+		C] Blob detection
+		D] Ridge detection
+		E] Scale-invariant feature transform
+		
+	CURVATURE
+		Edge direction
+		changing intensity 
+		autocorrelation
+
+	IMAGE MOTION
+		Motion detection. 
+		Area based, differential approach. 
+		Optical flow.
+
+	SHAPED BASED
+		Thresholding
+		Blob extraction
+		Template matching
+		Hough transform
+        		Lines
+        		Circles/ellipses
+        		Arbitrary shapes (generalized Hough transform)
+        		Works with any parameterizable feature (class variables, cluster detection, etc..)
+
+	FLEXIBLE METHODS
+		Deformable, parameterized shapes
+		Active contours (snakes)
+
+
+
+
+
+
+
+
+
+_________________________________________________________________________________________________________________________________________
+_________________________________________________________________________________________________________________________________________ _________________________________________________________________________________________________________________________________________
+**For explanatory Purposes little to no implementation of MATLAB packages will be used
+
+**A file with the TIF or TIFF file extension is a Tagged Image file, used for storing high quality raster type graphics. The format supports lossless compression so that graphic artists and photographers can archive their photos to save on disk space without compromising quality.
+
+**In computer vision and image processing feature detection includes methods for computing abstractions of image information and making local decisions at every image point whether there is an image feature of a given type at that point or not. The resulting features will be subsets of the image domain, often in the form of isolated points, continuous curves or connected regions.
+
+**Usain Bolt showed that he reached at top speed of 12.27 meters per second
+
+
+***     We do this so that we can focus on just dealing with one feature, the brightness values of a pixel.
+
+
+
+Problem: Detect the number of people in a room
+Input:A constant stream of pictures files, photographing the room.
+Output: An integer that is the total number of people in the room.
+
+Input_1: One jpeg color image file
+
+Steps
+1]Convert inputImage.jpeg from color to a grayscale image inputGrayImage.TIFF
+   A)The color image is converted to grayscale image by averaging the color components R,B,G into one grayscale value that ranges from 0 to 255.
+     This averaging is performed on every pixel in the inputImage.jpeg ::= 
+
+          inputImage  = imread('inputImage.jpg');
+          [x,y,z] = size(inputImage);
+          inputGrayImage=uint8(zeros(x,y));
+          for i=1 : x
+               for j=1 : y  
+                    inputGrayImage(i,j)= uint8((0.33*inputImage(i,j,3) + 0.33*inputImage(i,j,3) + 0.33*inputImage(i,j,3)));
+               end
+          end
+
+2]In order to improve the contrast of the image we perform a histogram equalization on inputGrayImage. 
+   Typically histogram equalization is used on low contrast images. 
+   While our device is intended to be used indoors. 
+   We cannot guarantee that a consumer will place the device in a place that provides consistent image contrast.
+   
+   Suppose:
+        k will represent the grayscale value, which can be 0,1,2,...,255.
+        h[k] will represent the histogram array for the inputGrayImage(m,n) whose size is M*N.
+        p[k] will represent the discrete probability for brightness k, which can be calculated by p[k] = h[k]/(M*N)
+        c[k] will represent the cumulative distribution function, which can be calculated by c[k] = SUM{ p[i] } for i=0:k
+        inputHistEqualizeImage[m,n] will represent the brightness transformation at a pixel (m,n), 
+             which can be calculated by inputHistEqualizeImage[m,n] = 255*c[inputGrayImage(m,n)]
+	
+
+
+
+
+
+3]
+4]
+5]
+6]
+7]
+8]
+9]
+10]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
