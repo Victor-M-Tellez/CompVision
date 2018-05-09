@@ -1,0 +1,165 @@
+
+KEY COMPONENTS OF THE COMPUTER VISION SYSTEM:
+	I)Image acquisition – 
+	II)Pre-processing
+	III)Feature extraction
+	IV)Detection/segmentation
+	V)High-level processing
+	VI)Decision making
+
+I)Image acquisition – 
+	I.A] A digital image is produced by one or several image sensors 
+		IA.1) light-sensitive cameras: Raspberry pi
+		IA.2) light-sensitive cameras: usb port camera
+		 
+	I.B] Depending on the type of sensor, the resulting image data can be:
+		IB.1) an ordinary 2D image
+		IB.2) a 3D volume
+		IB.3) an image sequence
+
+	I.C] The pixel values:
+		IC.1) typically correspond to light intensity in one or several spectral bands 
+			IC1.i) gray images 
+			IC1.ii) color images
+		
+
+
+II)Pre-processing – *cite chapter 4*
+	II.A] Image Enhancing:
+		Before a computer vision method can be applied to image data in order to extract some specific piece of information, 
+		it is usually necessary to process the data in order to assure that it satisfies certain assumptions implied by the method. Examples:
+        		IIA.1] Contrast enhancement to assure that relevant information can be detected.
+			    *Image Histogram::= The Image histogram is a plot of the number of pixels for each tonal value in an image. 
+						   The Image histogram shows us the tonal distribution of an image
+
+				IIA1.i] Histogram Equalization: allows for areas of lower local contrast to gain a higher contrast.
+					*utilizes an image histogram in order to analyze the image and make proper changes
+					*This method usually increases the global contrast of an image. 
+						Specially when the usable data of the image is represented by close contrast values. 
+					*Through this adjustment, the intensities can be better distributed on the histogram.  
+ 
+	        	IIA.2] Image denoising AKA Image filtering: Methods for eliminating Signal Noise. Types of noise & their filter:
+				   *definition* linear filters: use the same pattern of weigths for every window; 
+							> implemented using the weighted sum of the pixels in successive windows. 
+							> Spatially invarient and can be implemented using a convolution mask
+				   *definition* linear smoothing filters: remove high frequency components and get rid of sharp details in an image
+							> this filter has vertical and horizontal symmetry and typically one main lobe 
+							> example the gaussian filter
+								    
+				   *definition* nonlinear filters:any filter that is not a weighted some of the pixels. 
+							> Can adjust its weights so that more smoothing is done in a relatively uniform area of 
+							   the image and little smoothing is done acroos sharp changes in the image.
+				   *definition* spatially invarient: the same calculation is performed regardless of the position on the image
+ 				IIA2.i] Mean filter::=the value at each pixel is replaced by the average of all the values in the local neighborhood
+							> Can be implemented as a convolution operation; 
+				IIA2.ii] Median filter::= Spatially invarient, nonlinear filter. 
+							> pixel[i,j] = Median value of the set containing all the pixel values in pixel[i,j] neighborhood
+				IIA2.iii] Gaussian filter::= 
+							> Has rotational Symmetry so the amount of smoothing performed will be the same in all directions
+							> This filter will not bias subsequent edge detection in any particular direction.
+							> This filter replaces each pixel with a weighted average of the neighboring pixels; Such that
+							     the weight given to a neighbor decreases monotonically with distance from the center pixel
+							> Acts as a low pas filter because the Fourier transform of a Gaussian is a Gaussian
+							> Gaussian Functions are separable: 2D Gaussian convolution can be performed by convolving the
+							     image with a 1D Gaussian, and then convolving the result with the same 1D Gaussian filter
+							     used earlier, but this time the filter is orthogonal to how it was the first time
+							> As the width of the Gaussian in the Spatial domain is increased, the amount of smoothing that
+							     the Gaussian performs increases; But in the Frequency domain the Gaussian becomes narrower
+							     and passes less High Frequency noise and texture
+				IIA2.iv] salt and pepper noise::= 
+					    *Some pixels in the image have been randomly assigned a color or intensity value. 
+					    *the value of a noisy pixel has no relation to the color of surrounding pixels. 
+					    *On Average this type of noise will only affect a small number of image pixels. 
+					    *Use Median filter to remove this noise
+				IIA2.v] Gaussian noise::= 
+					    *contains variations in intensity that are drawn from a gaussian or normal distribution (sensor noise)
+					    *Use a Linear filter to remove this noise, the gaussian filter
+					    
+				IIA2.vi] Impulse noise::= 
+					    *Contains only random occurences of white intensity values
+					    *Use Median filter to remove this noise
+        		IIA.3] Scale space representation to enhance image structures at locally appropriate scales.
+
+
+
+
+III)Feature extraction – 
+	III.A] Image features at various levels of complexity are extracted from the image data. Typical examples of such features are:
+        	IIIA.1] 
+			IIIA1.i]   Lines::= we will use hough transform to find the lines 
+			IIIA1.ii]  edges::=the points where the gradient magnitude assumes a local maximum in the gradient direction
+						> Borders between areas of high and low gray value.
+			IIIA1.iii] ridges::= are formed with the points where the intensity gray level reaches a local extremum in 
+						   a given direction. Thin lines darker or brighter than their neighborhood.
+						> if we do an edge detection on a ridge area we will get a double line, 
+						   one from each side of the ridge.
+
+		*The purpose of ridge detection is usually to capture the major axis of symmetry of an elongated object*
+		*the purpose of edge detection is usually to capture the boundary of the object*
+        	IIIA.2] Localized interest points such as 
+			IIIA2.i]   corners::=
+						> A corner can be defined as the intersection of two edges. 
+						> A corner can also be defined as a point for which there are two dominant and different 
+						    edge directions in a local neighbourhood of the point. 
+			IIIA2.ii]  blobs::=
+						> a group of connecting pixels that are related to each other. 
+						> useful for identifying seperate objects in a scene.
+		
+		IIIA.3] Difficult features to extract:
+			IIIA3.i]   Motion
+					> Optical flow is used to compute the motion of the pixels of an image sequence. 
+					   It provides a dense (point to point) pixel correspondance
+
+			IIIA3.ii]  shape 
+			IIIA3.iii] Texture
+
+
+
+
+
+IV)Detection/segmentation – At some point in the processing a decision is made about which image points or regions of the image are 
+	relevant for further processing.Examples are
+        IV.A] Selection of a specific set of interest points
+        IV.B] Segmentation of one or multiple image regions which contain a specific object of interest.
+        IV.C] Segmentation of image into nested scene architecture comprised foreground, object groups, single objects 
+	        or salient object parts (also referred to as spatial-taxon scene hierarchy)[22]
+
+
+
+
+
+V)High-level processing – At this step the input is typically a small set of data, for example a set of points or an image region which is assumed to contain a specific object.[21] The remaining processing deals with, for example:
+        A] Verification that the data satisfy model-based and application specific assumptions.
+        B] Image recognition – classifying a detected object into different categories.
+      
+
+
+VI)Decision making Making the final decision required for the application,[21] for example:
+        A] Pass/fail on automatic inspection applications
+
+
+
+
+
+
+Edge Detection
+	canny
+	deriche
+	differential
+	sobel
+	prewitt
+	robert cross
+Corner detection
+	Harris operator
+	Shi and tomasi
+Blob detection
+	Laplacian of Gaussian
+	Diference of Gaussian
+	Determinat of Hessian
+	Maximally stable extermal regions
+Hough transform
+Feature description
+	SIFT
+	SURF
+	GLOH
+	HOG
